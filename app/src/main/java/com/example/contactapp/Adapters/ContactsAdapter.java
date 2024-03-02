@@ -56,17 +56,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ContactsAdapter.ViewHolder holder, int position) {
         contactUser contact = contactsArray.get(position);
-        holder.contactPhone.setText(contact.phone);
-        holder.contactName.setText(contact.name);
+//        holder.contactPhone.setText(contact.getPhoneNumbers());
+        StringBuilder phoneNumbersText = new StringBuilder();
+        ArrayList<String> phoneNumbers = contact.getPhoneNumbers();
+        for (String phoneNumber : phoneNumbers) {
+            phoneNumbersText.append(phoneNumber).append(", ");
+        }
+        holder.contactPhone.setText(phoneNumbersText.toString().trim());
+        holder.contactName.setText(contact.getName());
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                view.setBackgroundColor(ContextCompat.getColor(context,R.color.variantdark));
                 contactUser selectedContact = contactsArray.get(holder.getAdapterPosition());
-              contactView user =  OpenContact.Open(context,selectedContact.id);
+              contactView user =  OpenContact.Open(context,selectedContact.getId());
               if (user != null){
                   Gson gson = new Gson();
                   String userData = gson.toJson(user);
+                  System.out.println(gson.toJson(selectedContact));
                   OpenActivity.Open(context, ContactPreview.class, userData);
               }
             }

@@ -26,6 +26,7 @@ import com.example.contactapp.Modules.SearchContacts;
 import com.example.contactapp.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -96,36 +97,58 @@ public class MainActivity extends AppCompatActivity {
 
 
     @SuppressLint("Range")
-    public void getManyContacts(){
+    public void getManyContacts() {
         ArrayList<contactUser> contacts = new ArrayList<>();
-        String[] projection =  new String[]{
+        String[] projection = new String[]{
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID
         };
 
         Cursor cs = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection,null,null,ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" ASC");
+                projection, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+
         Log.d("contactCount", String.valueOf(cs.getCount()));
-        if (cs != null && cs.getCount()>0){
-            while (cs.moveToNext()){
+
+        if (cs != null && cs.getCount() > 0) {
+            HashMap<String, ArrayList<String>> contactsMap = new HashMap<>();
+
+            while (cs.moveToNext()) {
                 String phone = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 String name = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String id = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                contactUser user = new contactUser(name,id,phone);
-                contacts.add(user);
+
+                // Check if the name already exists in the map
+                if (contactsMap.containsKey(name)) {
+                    // If yes, add the phone number to the existing list
+                    contactsMap.get(name).add(phone);
+                } else {
+                    // If no, create a new list with the phone number
+                    ArrayList<String> phoneNumbers = new ArrayList<>();
+                    phoneNumbers.add(phone);
+                    contactsMap.put(name, phoneNumbers);
+
+                    // Create and add the contact user
+                    contactUser user = new contactUser(name, id, phoneNumbers);
+                    contacts.add(user);
+                }
             }
+
             cs.close();
+
+            // Now, 'contacts' array contains contacts with multiple phone numbers
             contacts myContacts = new contacts(contacts);
-            if (myContacts.getContactsArray() != null && myContacts.getContactsArray().size()>0){
+
+
+            if (myContacts.getContactsArray() != null && myContacts.getContactsArray().size() > 0) {
                 removeVisibility();
                 renderContacts(myContacts.getContactsArray());
-            }else {
+            } else {
                 renderNoContacts();
             }
         }
-
     }
+
 
     private void renderContacts(ArrayList<contactUser> contactsArray) {
 

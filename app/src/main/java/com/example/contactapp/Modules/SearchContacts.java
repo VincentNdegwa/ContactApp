@@ -10,6 +10,7 @@ import com.example.contactapp.Data.contactUser;
 import com.example.contactapp.Data.contacts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SearchContacts {
     @SuppressLint("Range")
@@ -29,13 +30,29 @@ public class SearchContacts {
 
         Log.d("contactCount", String.valueOf(cs.getCount()));
         if (cs != null && cs.getCount()>0){
-            while (cs.moveToNext()){
-                 String phone = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            HashMap<String, ArrayList<String>> contactsMap = new HashMap<>();
+
+            while (cs.moveToNext()) {
+                String phone = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 String name = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String id = cs.getString(cs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                contactUser user = new contactUser(name,id,phone);
-                contacts.add(user);
+
+                // Check if the name already exists in the map
+                if (contactsMap.containsKey(name)) {
+                    // If yes, add the phone number to the existing list
+                    contactsMap.get(name).add(phone);
+                } else {
+                    // If no, create a new list with the phone number
+                    ArrayList<String> phoneNumbers = new ArrayList<>();
+                    phoneNumbers.add(phone);
+                    contactsMap.put(name, phoneNumbers);
+
+                    // Create and add the contact user
+                    contactUser user = new contactUser(name, id, phoneNumbers);
+                    contacts.add(user);
+                }
             }
+
             cs.close();
             contacts myContacts = new contacts(contacts);
             return myContacts.getContactsArray();
