@@ -2,17 +2,19 @@ package com.example.contactapp.Data;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 public class contactView {
     public String name;
     public String id;
-    public String phone;
+    public ArrayList<String> phone;
     public Bitmap image;
 
     public String email;
 
 
 
-    public contactView(String name, String id, String phone, String email, Bitmap image) {
+    public contactView(String name, String id, ArrayList<String> phone, String email, Bitmap image) {
         this.name = name;
         this.id = id;
         this.phone = phone;
@@ -36,7 +38,7 @@ public class contactView {
         this.id = id;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(ArrayList<String> phone) {
         this.phone = phone;
     }
 
@@ -52,7 +54,7 @@ public class contactView {
         this.image = image;
     }
 
-    public String getPhone() {
+    public ArrayList<String> getPhone() {
         return phone;
     }
 

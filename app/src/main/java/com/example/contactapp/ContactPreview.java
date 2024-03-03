@@ -1,8 +1,12 @@
 package com.example.contactapp;
 
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -13,12 +17,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.example.contactapp.databinding.ActivityContactPreviewBinding;
 import com.google.gson.Gson;
 import com.example.contactapp.Data.contactView;
+
+import java.util.ArrayList;
 
 public class ContactPreview extends AppCompatActivity {
 
@@ -40,7 +44,7 @@ public class ContactPreview extends AppCompatActivity {
                 new ActivityResultContracts.RequestPermission(),
                 isGranted->{
                     if (isGranted){
-                        dialPhone();
+                        dialPhone(null);
                     }
                 }
         );
@@ -78,20 +82,20 @@ public class ContactPreview extends AppCompatActivity {
             }
         });
 
-        binding.callIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(ContactPreview.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
-                    dialPhone();
-                }else {
-                    resultLauncher.launch(Manifest.permission.CALL_PHONE);
-                }
-            }
-        });
+//        binding.callIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (ContextCompat.checkSelfPermission(ContactPreview.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+//                    dialPhone();
+//                }else {
+//                    resultLauncher.launch(Manifest.permission.CALL_PHONE);
+//                }
+//            }
+//        });
     }
 
-    private void dialPhone() {
-        String phone = "tel:"+ Uri.parse(user.phone);
+    private void dialPhone(String phoneNumber) {
+        String phone = "tel:"+ Uri.parse(phoneNumber);
         Intent callIntent = new Intent(Intent.ACTION_DIAL);
         callIntent.setData(Uri.parse(phone));
         startActivity(callIntent);
@@ -106,10 +110,89 @@ public class ContactPreview extends AppCompatActivity {
             binding.contactEmail.setText("No email");
         }
 
-        if (user.phone != null){
-            binding.contactNumber.setText(user.phone);
-        }else {
-            binding.contactNumber.setText("Number does not exist");
+        if (!user.phone.isEmpty()){
+//            binding.contactNumber.setText(user.phone);
+            renderPhones(user.getPhone());
         }
+    }
+
+    private void renderPhones(ArrayList<String> phone) {
+        // Assuming 'binding' is your ViewBinding instance
+        LinearLayout parentLayout = binding.phone;
+
+
+            for (String phoneNumber : phone) {
+                // Create LinearLayout
+                LinearLayout linearLayout = new LinearLayout(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                layoutParams.setMargins(0, 50, 0, 0);
+                linearLayout.setLayoutParams(layoutParams);
+                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                linearLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.dark_lining));
+                linearLayout.setPadding(30, 30, 30, 30);
+                linearLayout.setGravity(Gravity.CENTER);
+
+                // Create TextView
+                TextView textView = new TextView(this);
+                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1
+                );
+                textView.setLayoutParams(textParams);
+                textView.setText(phoneNumber);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+                textView.setTextColor(ContextCompat.getColor(this, R.color.white));
+
+                // Create CardView
+                CardView cardView = new CardView(this);
+                LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                cardView.setLayoutParams(cardParams);
+//                cardView.setCardCornerRadius(getResources().getDimension(R.dimen.card_cornerRadius));
+                cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.green));
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (ContextCompat.checkSelfPermission(ContactPreview.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                    dialPhone(phoneNumber);
+                        }else {
+                    resultLauncher.launch(Manifest.permission.CALL_PHONE);
+                        }
+                    }
+                });
+
+                // Create ImageView
+                ImageView imageView = new ImageView(this);
+                LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
+                        (int) TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                35,
+                                getResources().getDisplayMetrics()
+                        ),
+                        (int) TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                35,
+                                getResources().getDisplayMetrics()
+                        )
+                );
+
+                imageView.setLayoutParams(imageParams);
+                imageView.setImageResource(R.drawable.phone_icon);
+
+                // Add TextView and CardView to LinearLayout
+                linearLayout.addView(textView);
+                cardView.addView(imageView);
+                linearLayout.addView(cardView);
+
+                // Add LinearLayout to parent layout
+                parentLayout.addView(linearLayout);
+        }
+
     }
 }

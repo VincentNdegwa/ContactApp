@@ -69,11 +69,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             public void onClick(View view) {
 //                view.setBackgroundColor(ContextCompat.getColor(context,R.color.variantdark));
                 contactUser selectedContact = contactsArray.get(holder.getAdapterPosition());
-              contactView user =  OpenContact.Open(context,selectedContact.getId());
+              contactView user =  OpenContact.Open(context,selectedContact.getId(), selectedContact.getName());
               if (user != null){
                   Gson gson = new Gson();
                   String userData = gson.toJson(user);
-                  System.out.println(gson.toJson(selectedContact));
                   OpenActivity.Open(context, ContactPreview.class, userData);
               }
             }

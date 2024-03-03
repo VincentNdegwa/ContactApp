@@ -10,15 +10,17 @@ import android.provider.ContactsContract;
 
 import com.example.contactapp.Data.contactView;
 
+import java.util.ArrayList;
+
 public class OpenContact {
 
 
     @SuppressLint("Range")
-    public static contactView Open(Context context, String contactId) {
+    public static contactView Open(Context context, String contactId, String Name) {
         contactView contactView= null;
 
-        String selection = ContactsContract.Contacts._ID + " =?";
-        String[] selectionArgs = new String[]{contactId};
+        String selection = ContactsContract.Contacts.DISPLAY_NAME + " =?";
+        String[] selectionArgs = new String[]{Name};
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI,
                 null,
@@ -30,10 +32,10 @@ public class OpenContact {
         if (cursor != null){
             if (cursor.moveToFirst()){
                 String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                String phoneNumber = getPhoneNumber(context.getContentResolver(), contactId);
                 String emailAddress = getEmailAddress(context.getContentResolver(), contactId);
                 byte[] photoByte = getPhotoUri(context.getContentResolver(), contactId);
                 Bitmap photoBimap = getBitmapFromBytes(photoByte);
+                ArrayList<String> phoneNumber = getPhoneNumber(context.getContentResolver(), contactId,contactName);
                 contactView user = new contactView(contactName,contactId,phoneNumber,emailAddress,photoBimap);
                 contactView = user;
             }
@@ -91,9 +93,11 @@ public class OpenContact {
         return null;
     }
     @SuppressLint("Range")
-    private static String getPhoneNumber(ContentResolver contentResolver, String contactId) {
-        String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID+" =?";
-        String[] selectionArgs = new String[]{contactId};
+    private static ArrayList<String> getPhoneNumber(ContentResolver contentResolver, String contactId, String name) {
+        ArrayList<String> phoneNumbers = new ArrayList<>();
+
+        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " =?";
+        String[] selectionArgs = new String[]{name};
 
         Cursor phoneCursor = contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -101,17 +105,19 @@ public class OpenContact {
                 selection,
                 selectionArgs,
                 null
-                );
-        if (phoneCursor !=null){
-            while (phoneCursor.moveToNext()){
+        );
+
+        if (phoneCursor != null) {
+            while (phoneCursor.moveToNext()) {
                 String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                phoneCursor.close();
-                return  phoneNumber;
+                phoneNumbers.add(phoneNumber);
             }
+            phoneCursor.close();
         }
-        phoneCursor.close();
-        return null;
+
+        return phoneNumbers;
     }
+
 
     private static Bitmap getBitmapFromBytes(byte[] bytes){
         if (bytes != null){
