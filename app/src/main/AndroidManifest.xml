@@ -27,34 +27,20 @@
             android:theme="@style/Theme.ContactApp"
             tools:targetApi="31">
 
-<!--        <service android:name=".Services.Connecting"-->
-<!--                 android:permission="android.permission.BIND_INCALL_SERVICE"-->
-<!--                 android:exported="true">-->
-<!--            <meta-data android:name="android.telecom.IN_CALL_SERVICE_UI" android:value="true" />-->
-<!--            <meta-data android:name="android.telecom.IN_CALL_SERVICE_RINGING"-->
-<!--                       android:value="true" />-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.telecom.InCallService"/>-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
-
-        <service
-                android:name=".Services.Connecting"
-                android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE" android:exported="true">
+        <service android:name=".Services.Connecting"
+                 android:permission="android.permission.BIND_INCALL_SERVICE"
+                 android:exported="true">
+            <meta-data android:name="android.telecom.IN_CALL_SERVICE_UI" android:value="true" />
+            <meta-data android:name="android.telecom.IN_CALL_SERVICE_RINGING"
+                       android:value="true" />
             <intent-filter>
-                <action android:name="android.telecom.ConnectionService" />
+                <action android:name="android.telecom.InCallService"/>
             </intent-filter>
         </service>
 
-
-
-
-
-
         <activity
                 android:name=".Dialer"
-                android:exported="false">
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -68,7 +54,7 @@
 
         <activity
                 android:name=".ContactPreview"
-                android:exported="false">
+                android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
@@ -94,14 +80,6 @@
             </intent-filter>
         </activity>
 
-<!--        <service-->
-<!--                android:name=".Services.Connecting"-->
-<!--                android:exported="true"-->
-<!--                android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.telecom.ConnectionService"/>-->
-<!--            </intent-filter>-->
-<!--        </service>-->
     </application>
 
 </manifest>

@@ -98,6 +98,7 @@ public class ContactPreview extends AppCompatActivity {
     }
 
     private void dialPhone(String phoneNumber) {
+        Log.d("btn", "dialPhone: pressed");
 //        Uri uri = Uri.fromParts("tel", phoneNumber, null);
 //        TelecomManager tl = getSystemService(TelecomManager.class);
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {

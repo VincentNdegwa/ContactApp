@@ -1,21 +1,33 @@
 package com.example.contactapp.Services;
-
-import android.net.Uri;
+import android.content.Intent;
+import android.os.Bundle;
 import android.telecom.*;
-import android.util.Log;
-import com.example.contactapp.Modules.CallConnection;
+import android.telecom.InCallService;
+import android.telephony.TelephonyManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-public class Connecting extends ConnectionService {
+
+public class Connecting extends InCallService {
+    private LocalBroadcastManager localBroadcastManager;
     @Override
-    public Connection onCreateOutgoingConnection(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
-        Log.d("data", "onCreateOutgoingConnection: "+ request);
-       String phone = request.getAddress().getSchemeSpecificPart();
-        CallConnection connection = new CallConnection();
-        connection.setAddress(Uri.parse(phone), TelecomManager.PRESENTATION_ALLOWED);
-        connection.setInitializing();
-        connection.setInitializing();
-        connection.setDialing();
-        return connection;
+    public void onCreate() {
+        super.onCreate();
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
+    @Override
+    public void onConnectionEvent(Call call, String event, Bundle extras) {
+        int state = call.getState();
+        if (event.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)){
+            state = call.getState();
+        }
+        updateDialerUI(state);
+    }
+
+    private void updateDialerUI(int state){
+        Intent intent = new Intent("CALL_STATUS_UPDATE");
+        intent.putExtra("state", state);
+        localBroadcastManager.sendBroadcast(intent);
+    }
 }
+
