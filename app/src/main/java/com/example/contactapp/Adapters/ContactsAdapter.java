@@ -57,12 +57,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(@NonNull ContactsAdapter.ViewHolder holder, int position) {
         contactUser contact = contactsArray.get(position);
 //        holder.contactPhone.setText(contact.getPhoneNumbers());
-        StringBuilder phoneNumbersText = new StringBuilder();
-        ArrayList<String> phoneNumbers = contact.getPhoneNumbers();
-        for (String phoneNumber : phoneNumbers) {
-            phoneNumbersText.append(phoneNumber).append(", ");
-        }
-        holder.contactPhone.setText(phoneNumbersText.toString().trim());
+//        StringBuilder phoneNumbersText = new StringBuilder();
+//        ArrayList<String> phoneNumbers = contact.getPhoneNumbers();
+//        for (String phoneNumber : phoneNumbers) {
+//            phoneNumbersText.append(phoneNumber).append(" ");
+//        }
+//        holder.contactPhone.setText(phoneNumbersText.toString().trim());
         holder.contactName.setText(contact.getName());
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,4 +7,12 @@
     <color name="grey">#A9A9A9</color>
     <color name="variantwhite">#F5F5F5</color>
     <color name="green">#03C988</color>
+<!--    ////-->
+
+    <color name="accentColor">#FF4081</color> <!-- Vibrant Pink as an example -->
+    <color name="primaryColor">#2196F3</color> <!-- Material Blue as an example -->
+    <color name="errorColor">#FF0000</color> <!-- Red for errors -->
+    <color name="successColor">#4CAF50</color> <!-- Green for success -->
+    <color name="neutralBackground">#ECEFF1</color> <!-- Light Gray for neutral background -->
+
 </resources>
