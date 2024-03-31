@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.contactapp"
-        minSdk = 29
+        minSdk = 30
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"

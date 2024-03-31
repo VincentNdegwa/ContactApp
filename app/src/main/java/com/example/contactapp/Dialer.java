@@ -77,14 +77,19 @@ public class Dialer extends AppCompatActivity {
         }else {
             Log.d("Dialer", "initiateCall: Phone Account Not Registered");
         }
+                List<PhoneAccountHandle> phoneAccountHandleList = telecomManager.getCallCapablePhoneAccounts();
 
+//        PhoneAccountHandle phoneAccountHandle = phoneAccountHandleList.get(0);
         Uri uri = Uri.fromParts(PhoneAccount.SCHEME_TEL, phoneNumber, null);
         Bundle extras = new Bundle();
-        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandle);
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandleList.get(0));
         telecomManager.placeCall(uri, extras);
     }
     private static void unregisterAllPhoneAccounts(Context context, TelecomManager telecomManager) {
-        List<PhoneAccountHandle> phoneAccountHandles = telecomManager.getOwnSelfManagedPhoneAccounts();
+        List<PhoneAccountHandle> phoneAccountHandles = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            phoneAccountHandles = telecomManager.getOwnSelfManagedPhoneAccounts();
+        }
         for (PhoneAccountHandle handle : phoneAccountHandles) {
             telecomManager.unregisterPhoneAccount(handle);
         }
