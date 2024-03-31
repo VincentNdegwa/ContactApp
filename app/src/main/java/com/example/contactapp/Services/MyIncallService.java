@@ -1,5 +1,9 @@
 package com.example.contactapp.Services;
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.telecom.*;
 import android.telecom.InCallService;
@@ -8,16 +12,23 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 public class MyIncallService extends InCallService {
+    private TelecomManager mTelecomManager;
+    private AudioManager audioManager;
+
     private LocalBroadcastManager localBroadcastManager;
+    private  Call mCall;
     @Override
     public void onCreate() {
         super.onCreate();
+        mTelecomManager = (TelecomManager)getSystemService(TELECOM_SERVICE);
+        audioManager =(AudioManager)getSystemService(Context.AUDIO_SERVICE);
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
     @Override
     public void onCallAdded(Call call) {
         super.onCallAdded(call);
+        mCall =call;
         int initialState = call.getState();
         Log.e("Call Added", "onCallAdded: call added " + initialState);
 
@@ -54,23 +65,22 @@ public class MyIncallService extends InCallService {
     }
 
 
-    private void holdCall(Call call, boolean shouldHold) {
-        if (call != null) {
-            call.hold();
+    private void holdCall() {
+        if (mCall != null) {
+            mCall.hold();
+            mCall.hold();
         }
     }
 
-    // Example method to mute/unmute a call
-    private void muteCall(Call call, boolean shouldMute) {
-        if (call != null) {
-
+    public void muteCall() {
+        if (audioManager != null && checkCallingOrSelfPermission(Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED) {
+            audioManager.setMicrophoneMute(true);
         }
     }
 
-    // Example method to reject an incoming call
-    private void rejectCall(Call call) {
-        if (call != null) {
-            call.reject(false, null);
+    private void rejectCall() {
+        if (mCall != null) {
+            mCall.reject(false, null);
         }
     }
 
