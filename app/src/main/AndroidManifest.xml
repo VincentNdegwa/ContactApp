@@ -27,7 +27,14 @@
             android:theme="@style/Theme.ContactApp"
             tools:targetApi="31">
 
-        <service android:name=".Services.Connecting"
+        <service
+                android:name=".Services.MyConnectionService"
+                android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE" android:exported="true">
+            <intent-filter>
+                <action android:name="android.telecom.ConnectionService" />
+            </intent-filter>
+        </service>
+        <service android:name=".Services.MyIncallService"
                  android:permission="android.permission.BIND_INCALL_SERVICE"
                  android:exported="true">
             <meta-data android:name="android.telecom.IN_CALL_SERVICE_UI" android:value="true" />
@@ -37,6 +44,7 @@
                 <action android:name="android.telecom.InCallService"/>
             </intent-filter>
         </service>
+
 
         <activity
                 android:name=".Dialer"

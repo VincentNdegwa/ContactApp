@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     }
             );
 
-            String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
+            String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.MANAGE_OWN_CALLS};
             requestMultiplePermissionsLauncher.launch(permissions);
         }
     }
