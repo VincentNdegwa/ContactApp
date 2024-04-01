@@ -55,12 +55,13 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/dark"
                     app:layout_constraintVertical_bias="1.0"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
                         android:layout_width="match_parent"
+                        android:padding="30dp"
                         android:scaleType="fitXY"
                         android:id="@+id/contact_image"
                         android:src="@drawable/contact_icon"
@@ -71,19 +72,22 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/back_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10sp"
-                android:layout_marginLeft="10dp"
-                android:backgroundTint="@color/variantdark"
-                android:src="@drawable/baseline_arrow_back_24"/>
+            <ImageButton
+                    android:id="@+id/back_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10sp"
+                    android:layout_marginStart="10sp"
+                    android:layout_gravity="top|start"
+                    android:background="@color/dark"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/baseline_arrow_back_24"/>
+
             <ImageButton
                 android:id="@+id/option_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="top|right"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="top|end"
                 android:background="@color/dark"
                 android:scaleType="fitXY"
                 android:layout_marginRight="10sp"
@@ -115,7 +119,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="20sp"
+            android:padding="15sp"
             android:orientation="vertical">
 
             <LinearLayout android:layout_width="match_parent"
@@ -133,8 +137,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15sp"
+                android:background="@color/saturated_dark"
                 android:padding="10dp"
-                android:background="@drawable/dark_lining"
                 android:gravity="center"
                 android:orientation="horizontal">
 

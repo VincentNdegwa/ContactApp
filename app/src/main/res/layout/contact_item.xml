@@ -15,9 +15,10 @@
         android:backgroundTint="@color/dark">
         <ImageView
             android:id="@+id/icon_contact"
+            android:padding="15dp"
             android:layout_width="match_parent"
             android:src="@drawable/contact_icon"
-            android:background="@color/white"
+            android:background="@color/variantdark"
             android:layout_height="match_parent"/>
     </androidx.cardview.widget.CardView>
 
@@ -41,7 +42,7 @@
             android:id="@+id/contact_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/wood"/>
 
     </LinearLayout>
 

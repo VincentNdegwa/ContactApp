@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Contacts"
-            android:textColor="@color/grey"
+            android:textColor="@color/wood"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
             android:hint="Search Contact"
             android:padding="15sp"
             android:textColor="@color/white"
-            android:textColorHint="@color/grey" />
+            android:textColorHint="@color/wood" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/render_recyclerview"

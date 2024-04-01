@@ -2,23 +2,404 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
               tools:context=".Dialer"
               android:orientation="vertical"
-              android:padding="10dp">
+              android:background="@color/variantdark"
+              android:padding="0dp">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:text="Calling"
-              android:id="@+id/status_call"
-              android:layout_gravity="center"
-              android:textAlignment="center"
-              android:textColor="@color/accentColor"
-              android:textSize="30dp"/>
 
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="End Call"
-            android:id="@+id/button_call"
-            android:layout_gravity="center"
-            android:layout_marginTop="100dp"
-            android:background="@color/black"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_gravity="bottom"
+                    android:layout_height="200dp">
+
+                <LinearLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@color/variantdark">
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@color/dark">
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <androidx.cardview.widget.CardView
+                        android:id="@+id/contact_image_cardview"
+                        android:layout_width="200dp"
+                        android:layout_height="match_parent"
+                        app:cardCornerRadius="200dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:backgroundTint="@color/variantdark"
+                        app:layout_constraintVertical_bias="1.0"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                            android:layout_width="match_parent"
+                            android:padding="30dp"
+                            android:scaleType="fitXY"
+                            android:id="@+id/contact_image"
+                            android:src="@drawable/contact_icon"
+                            android:layout_height="match_parent" />
+
+                </androidx.cardview.widget.CardView>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark"
+            android:orientation="vertical">
+
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:orientation="vertical">
+            <TextView
+                    android:id="@+id/contact_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    android:textSize="25sp"
+                    android:textColor="@color/fadeblue"
+                    android:gravity="center"
+                    android:layout_marginTop="20sp"
+                    android:textStyle="bold"/>
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:text="Calling"
+                      android:id="@+id/status_call"
+                      android:layout_gravity="center"
+                      android:textAlignment="center"
+                      android:textColor="@color/accentColor"
+                      android:textSize="15sp"/>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15sp"
+                android:orientation="vertical">
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+            >
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                        >
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/mute_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/hold"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mute"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/mute_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="60dp"
+                            android:layout_margin="20dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/dial_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/dial_pad"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dial Pad"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/dial_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/voice_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/speaker_off"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Speaker"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/voice_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                </LinearLayout>
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                >
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="60dp"
+                            android:layout_margin="20dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/add_call_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/add_call"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Add Call"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/add_call_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="60dp"
+                            android:layout_margin="20dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/hold_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/add_call"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Hold"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/hold_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="60dp"
+                            android:layout_margin="20dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/record_button"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_margin="8dp"
+                                android:backgroundTint="@color/saturated_dark"
+                                android:layout_gravity="bottom|center"
+                                app:cardCornerRadius="60dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                        >
+
+                            <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:src="@drawable/add_call"
+                                    android:background="@color/saturated_dark"
+                            />
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Record"
+                                android:layout_gravity="center"
+                                android:layout_margin="0dp"
+                                android:textSize="8sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/record_button"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                android:textColor="@color/variantwhite"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_margin="8dp"
+                    android:backgroundTint="@color/errorColor"
+                    android:layout_gravity="bottom|center"
+                    app:cardCornerRadius="60dp">
+
+                <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/call_end"
+                        android:backgroundTint="@color/errorColor"
+                />
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 </LinearLayout>

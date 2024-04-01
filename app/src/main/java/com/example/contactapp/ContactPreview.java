@@ -180,7 +180,7 @@ public class ContactPreview extends AppCompatActivity {
                 layoutParams.setMargins(0, 50, 0, 0);
                 linearLayout.setLayoutParams(layoutParams);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                linearLayout.setBackground(ContextCompat.getDrawable(this, R.drawable.dark_lining));
+                linearLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.saturated_dark));
                 linearLayout.setPadding(30, 30, 30, 30);
                 linearLayout.setGravity(Gravity.CENTER);
 
