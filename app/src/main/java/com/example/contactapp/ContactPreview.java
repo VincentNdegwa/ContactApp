@@ -1,7 +1,11 @@
 package com.example.contactapp;
 
 import android.app.role.RoleManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.os.Build;
+import android.telecom.PhoneAccount;
+import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -23,12 +27,14 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.contactapp.Services.MyConnectionService;
 import com.example.contactapp.databinding.ActivityContactPreviewBinding;
 import com.google.gson.Gson;
 import com.example.contactapp.Data.contactView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ContactPreview extends AppCompatActivity {
@@ -39,6 +45,8 @@ public class ContactPreview extends AppCompatActivity {
     ActivityResultLauncher<String> resultLauncher;
     String pressedPhone;
     private static final int REDIRECT_ROLE_REQUEST_CODE = 1001;
+    private static final String PHONE_ACCOUNT_ID = "a547c15b-8655-4525-ba04-75f195831e1b";
+    
 
     private   TelecomManager telecomManager;
     @Override
@@ -97,33 +105,47 @@ public class ContactPreview extends AppCompatActivity {
         });
     }
 
-    private void dialPhone(String phoneNumber) {
-        Log.d("btn", "dialPhone: pressed");
-//        Uri uri = Uri.fromParts("tel", phoneNumber, null);
-//        TelecomManager tl = getSystemService(TelecomManager.class);
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//            resultLauncher.launch(Manifest.permission.CALL_PHONE);
-//        }else {
-//            tl.placeCall(uri, new Bundle());
-//        }
-
-        if (!phoneNumber.isEmpty()) {
-            Uri uri = Uri.fromParts("tel", phoneNumber, null);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            if (!getPackageName().equals(telecomManager.getDefaultDialerPackage())) {
-                Log.d("call", "dialPhone: try too call"+ telecomManager.getDefaultDialerPackage());
-                asKForDefault(telecomManager);
-            }
-            else {
-                Intent intent = new Intent(this, Dialer.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setData(uri);
-                startActivity(intent);
-            }
-
+    public void dialPhone(String phoneNumber) {
+        Context context = this;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+
+        TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+        unregisterAllPhoneAccounts(context, telecomManager);
+        PhoneAccountHandle phoneAccountHandle = new PhoneAccountHandle(
+                new ComponentName(context, MyConnectionService.class),
+                PHONE_ACCOUNT_ID);
+
+        if (telecomManager.getPhoneAccount(phoneAccountHandle) == null) {
+            registerPhoneAccount(context, phoneAccountHandle);
+            Log.d("Dialer", "initiateCall: Phone Account Registered, id:"+ PHONE_ACCOUNT_ID);
+        }else {
+            Log.d("Dialer", "initiateCall: Phone Account Not Registered");
+        }
+        List<PhoneAccountHandle> phoneAccountHandleList = telecomManager.getCallCapablePhoneAccounts();
+
+        Uri uri = Uri.fromParts(PhoneAccount.SCHEME_TEL, phoneNumber, null);
+        Bundle extras = new Bundle();
+        extras.putParcelable(TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE, phoneAccountHandleList.get(0));
+        telecomManager.placeCall(uri, extras);
+    }
+    private static void unregisterAllPhoneAccounts(Context context, TelecomManager telecomManager) {
+        List<PhoneAccountHandle> phoneAccountHandles = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            phoneAccountHandles = telecomManager.getOwnSelfManagedPhoneAccounts();
+        }
+        for (PhoneAccountHandle handle : phoneAccountHandles) {
+            telecomManager.unregisterPhoneAccount(handle);
+        }
+    }
+    private static void registerPhoneAccount(Context context, PhoneAccountHandle phoneAccountHandle) {
+        PhoneAccount phoneAccount = PhoneAccount.builder(phoneAccountHandle, "My_App_Phone_Account")
+                .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
+                .build();
+
+        TelecomManager telecomManager = (TelecomManager) context.getSystemService(Context.TELECOM_SERVICE);
+        telecomManager.registerPhoneAccount(phoneAccount);
     }
 
     private void asKForDefault(TelecomManager telecomManager) {
