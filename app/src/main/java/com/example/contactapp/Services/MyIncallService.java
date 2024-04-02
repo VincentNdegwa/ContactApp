@@ -100,6 +100,7 @@ public class MyIncallService extends InCallService  {
 
                 if (state == Call.STATE_ACTIVE) {
                     navigateToDialerActivity();
+                    CallNotification.showOutgoingCallNotification(call, MyIncallService.this);
                 }
             }
         });

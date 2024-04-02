@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.telecom.Call;
 import android.util.Log;
@@ -22,6 +23,7 @@ public class CallNotificationService extends Service {
     private static final int NOTIFICATION_ID= 10;
     private static final String INCOMING_CHANNEL_ID = "INCOMING_CHANNEL_ID";
     private LocalBroadcastManager localBroadcastManager;
+    private static Call mcall;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -31,12 +33,46 @@ public class CallNotificationService extends Service {
         PendingIntent answerPendingIntent = intent.getParcelableExtra("answerPendingIntent");
         PendingIntent contentIntent = intent.getParcelableExtra("contentIntent");
         PendingIntent pendingFullScreenIntent = intent.getParcelableExtra("pendingFullScreenIntent");
+        if (answerPendingIntent == null && pendingFullScreenIntent == null){
+            Notification notification = buildOngoingNotification(callerName,declinePendingIntent, contentIntent);
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            startForeground(NOTIFICATION_ID, notification);
+        }else {
+            Notification notification = buildCallNotification(callerName, declinePendingIntent, answerPendingIntent, contentIntent, pendingFullScreenIntent);
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            startForeground(NOTIFICATION_ID, notification);
+        }
 
-        Notification notification = buildCallNotification(callerName, declinePendingIntent, answerPendingIntent, contentIntent, pendingFullScreenIntent);
-        notification.flags = Notification.FLAG_ONGOING_EVENT;
-        startForeground(NOTIFICATION_ID, notification);
 
         return START_STICKY;
+    }
+
+    private Notification buildOngoingNotification(String callerName, PendingIntent declinePendingIntent, PendingIntent contentIntent) {
+        Notification.Builder builder = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder = new Notification.Builder(this,INCOMING_CHANNEL_ID)
+                    .setContentTitle("Outgoing call")
+                    .setContentText(callerName)
+                    .setContentIntent(contentIntent)
+                    .setSmallIcon(R.drawable.phone_icon)
+                    .setVisibility(Notification.VISIBILITY_PRIVATE)
+                    .setStyle(Notification.CallStyle.forOngoingCall(
+                            new Person.Builder().setName("callerName").build(),
+                            declinePendingIntent
+
+                    ));
+        }
+        if (builder == null) {
+            builder = new Notification.Builder(this, INCOMING_CHANNEL_ID)
+                    .setContentTitle("Outgoing call")
+                    .setContentText("callerName")
+                    .setPriority(Notification.PRIORITY_LOW)
+                    .setOngoing(true)
+                    .setSmallIcon(R.drawable.phone_icon)
+                    .setCategory(Notification.CATEGORY_CALL);
+        }
+        return  builder.build();
+
     }
 
     private Notification buildCallNotification(String callerName, PendingIntent declinePendingIntent, PendingIntent answerPendingIntent, PendingIntent contentIntent, PendingIntent pendingFullScreenIntent) {
@@ -59,6 +95,7 @@ public class CallNotificationService extends Service {
                     ));
 
         }
+
 
         if (builder == null) {
             builder = new Notification.Builder(this, INCOMING_CHANNEL_ID)
@@ -92,12 +129,12 @@ public class CallNotificationService extends Service {
             switch (state){
                 case Call.STATE_ACTIVE:
                     stopCalRingTone();
-                    Log.e(TAG, "onReceive: "+ "ANSWER CALL" );
+                    stopForeground(true);
+
                     break;
                 case Call.STATE_DISCONNECTED:
                     stopCalRingTone();
                     stopForeground(true);
-                    Log.e(TAG, "onReceive: "+ "REJECT CALL" );
                     break;
                 default:
                     Log.e(TAG, "onReceive: "+ "DEFAULT" );

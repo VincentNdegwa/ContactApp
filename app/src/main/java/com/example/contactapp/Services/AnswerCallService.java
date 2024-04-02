@@ -10,7 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 public class AnswerCallService extends Service {
 
     private LocalBroadcastManager localBroadcastManager;
-    private String TAG = "DeclineCallService";
+    private String TAG = "AnswerCallService";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

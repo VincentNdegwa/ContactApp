@@ -2,9 +2,7 @@ package com.example.contactapp.Modules;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.app.Person;
 import android.content.Context;
@@ -14,12 +12,10 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.telecom.Call;
-import android.util.Log;
-import android.widget.RemoteViews;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationChannelCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import com.example.contactapp.Dialer;
 import com.example.contactapp.IncommingCall;
@@ -28,6 +24,7 @@ import com.example.contactapp.R;
 import com.example.contactapp.Services.AnswerCallService;
 import com.example.contactapp.Services.CallNotificationService;
 import com.example.contactapp.Services.DeclineCallService;
+import com.example.contactapp.Services.MyIncallService;
 
 
 public class CallNotification {
@@ -65,7 +62,7 @@ public class CallNotification {
         );
 
         // Create decline intent
-        Intent declineIntent = new Intent(context, AnswerCallService.class);
+        Intent declineIntent = new Intent(context, DeclineCallService.class);
         declineIntent.putExtra("state", CallConstants.REJECT_CALL);
         PendingIntent declinePendingIntent = PendingIntent.getService(
                 context,
@@ -75,7 +72,7 @@ public class CallNotification {
         );
 
         // Create answer intent
-        Intent answerIntent = new Intent(context, DeclineCallService.class);
+        Intent answerIntent = new Intent(context, AnswerCallService.class);
         answerIntent.putExtra("state", CallConstants.ANSWER_CALL);
         PendingIntent answerPendingIntent = PendingIntent.getService(
                 context,
@@ -88,7 +85,6 @@ public class CallNotification {
         Intent fullScreenIntent = new Intent(context, IncommingCall.class);
         PendingIntent pendingFullScreenIntent = PendingIntent.
                 getActivity(context, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
 
 
         Intent serviceIntent = new Intent(context, CallNotificationService.class);
@@ -105,6 +101,37 @@ public class CallNotification {
         return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     }
 
+    public static void showOutgoingCallNotification(Call call, Context context) {
+
+
+
+        // Create decline intent
+        Intent declineIntent = new Intent(context, DeclineCallService.class);
+        declineIntent.putExtra("state", CallConstants.REJECT_CALL);
+        PendingIntent declinePendingIntent = PendingIntent.getService(
+                context,
+                0,
+                declineIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        // Create content intent
+        Intent intent = new Intent(context, Dialer.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+
+
+        Intent serviceIntent = new Intent(context, CallNotificationService.class);
+        serviceIntent.putExtra("callerName", "Caller");
+        serviceIntent.putExtra("declinePendingIntent", declinePendingIntent);
+        serviceIntent.putExtra("contentIntent", contentIntent);
+        context.startForegroundService(serviceIntent);
+    }
 }
 
 
