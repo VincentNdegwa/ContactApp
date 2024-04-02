@@ -11,7 +11,9 @@ import android.telecom.InCallService;
 import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.contactapp.Dialer;
+import com.example.contactapp.IncommingCall;
 import com.example.contactapp.Interfaces.CallConstants;
+import com.example.contactapp.Modules.CallNotification;
 
 
 public class MyIncallService extends InCallService  {
@@ -29,6 +31,7 @@ public class MyIncallService extends InCallService  {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         registerMyReceivers();
     }
+
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -86,18 +89,32 @@ public class MyIncallService extends InCallService  {
     @Override
     public void onCallAdded(Call call) {
         super.onCallAdded(call);
-        mCall =call;
+        mCall = call;
         call.registerCallback(new Call.Callback() {
             @Override
             public void onStateChanged(Call call, int state) {
                 super.onStateChanged(call, state);
-                Log.e("Call State Changed", "onStateChanged: call state changed to " + state);
                 String stateString = getStateString(state);
                 broadcastCallState(stateString);
+                senBroadCast_To_CallNotificationService(call.getState());
+
+                if (state == Call.STATE_ACTIVE) {
+                    navigateToDialerActivity();
+                }
             }
         });
 
-        Dialer.start(mCall, this);
+        if (call.getState() == Call.STATE_RINGING) {
+            CallNotification.showIncomingCallNotification(call,this);
+        } else {
+            navigateToDialerActivity();
+        }
+    }
+
+
+
+    private void navigateToDialerActivity() {
+            Dialer.start(mCall,this);
     }
 
     private String getStateString(int state) {
@@ -135,6 +152,7 @@ public class MyIncallService extends InCallService  {
     }
 
     private void answerCall() {
+        mCall.answer(mCall.getDetails().getVideoState());
     }
 
     private void stopRecording() {
@@ -175,6 +193,11 @@ public class MyIncallService extends InCallService  {
     private void broadcastCallState(String stateString) {
         Intent intent = new Intent("CALL_STATUS_UPDATE");
         intent.putExtra("state", stateString);
+        localBroadcastManager.sendBroadcast(intent);
+    }
+    private void senBroadCast_To_CallNotificationService(int state) {
+        Intent intent = new Intent("SERVICE_NOTIFICATION_STATE");
+        intent.putExtra("state", state);
         localBroadcastManager.sendBroadcast(intent);
     }
 

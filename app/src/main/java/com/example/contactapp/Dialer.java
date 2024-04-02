@@ -41,6 +41,9 @@ public class Dialer extends AppCompatActivity {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         phoneNumberUri = getIntent().getData();
         setContentView(dialerBind.getRoot());
+        if (callInst.getState() == Call.STATE_ACTIVE){
+            startTimer();
+        }
         eventListeners();
     }
 
