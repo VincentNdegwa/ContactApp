@@ -8,17 +8,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.IBinder;
 import android.telecom.Call;
 import android.util.Log;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.contactapp.R;
-import com.example.contactapp.Interfaces.CallConstants;
 
 public class CallNotificationService extends Service {
     private String TAG = "CallNotificationService";
@@ -33,17 +30,16 @@ public class CallNotificationService extends Service {
         PendingIntent declinePendingIntent = intent.getParcelableExtra("declinePendingIntent");
         PendingIntent answerPendingIntent = intent.getParcelableExtra("answerPendingIntent");
         PendingIntent contentIntent = intent.getParcelableExtra("contentIntent");
+        PendingIntent pendingFullScreenIntent = intent.getParcelableExtra("pendingFullScreenIntent");
 
-        Notification notification = buildCallNotification(callerName, declinePendingIntent, answerPendingIntent, contentIntent);
-       notification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+        Notification notification = buildCallNotification(callerName, declinePendingIntent, answerPendingIntent, contentIntent, pendingFullScreenIntent);
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
         startForeground(NOTIFICATION_ID, notification);
 
         return START_STICKY;
     }
 
-
-
-    private Notification buildCallNotification(String callerName, PendingIntent declinePendingIntent, PendingIntent answerPendingIntent, PendingIntent contentIntent) {
+    private Notification buildCallNotification(String callerName, PendingIntent declinePendingIntent, PendingIntent answerPendingIntent, PendingIntent contentIntent, PendingIntent pendingFullScreenIntent) {
         Notification.Builder builder = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             builder = new Notification.Builder(this, INCOMING_CHANNEL_ID)
@@ -53,6 +49,9 @@ public class CallNotificationService extends Service {
                     .setSmallIcon(R.drawable.phone_icon)
                     .setCategory(Notification.CATEGORY_CALL)
                     .setAutoCancel(false)
+                    .setOngoing(true)
+                    .setFullScreenIntent(pendingFullScreenIntent,true)
+                    .setFlag(Notification.FLAG_ONGOING_EVENT,true)
                     .setStyle(Notification.CallStyle.forIncomingCall(
                             new Person.Builder().setName("callerName").build(),
                             declinePendingIntent,

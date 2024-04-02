@@ -4,6 +4,7 @@ package com.example.contactapp.Modules;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.app.Person;
 import android.content.Context;
@@ -83,12 +84,19 @@ public class CallNotification {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
+        //Create fullscreen intent
+        Intent fullScreenIntent = new Intent(context, IncommingCall.class);
+        PendingIntent pendingFullScreenIntent = PendingIntent.
+                getActivity(context, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+
 
         Intent serviceIntent = new Intent(context, CallNotificationService.class);
         serviceIntent.putExtra("callerName", "Caller");
         serviceIntent.putExtra("declinePendingIntent", declinePendingIntent);
         serviceIntent.putExtra("answerPendingIntent", answerPendingIntent);
         serviceIntent.putExtra("contentIntent", contentIntent);
+        serviceIntent.putExtra("pendingFullScreenIntent", pendingFullScreenIntent);
         context.startForegroundService(serviceIntent);
 
     }
