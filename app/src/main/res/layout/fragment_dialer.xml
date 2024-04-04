@@ -1,0 +1,85 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dark"
+        android:padding="10dp"
+        tools:context=".Fragments.DialerFragment">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="vertical"
+            android:gravity="center|end">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center|end">
+
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:clickable="true"
+                    android:src="@drawable/contact_icon2" />
+
+        </LinearLayout>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recent"
+                android:textColor="@color/fadeblue"
+                android:textStyle="bold"
+                android:textSize="20sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp">
+
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/dialer_tab"
+                android:background="@color/variantdark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true" />
+
+        <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/dialer_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/dialer_tab" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_dialer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/wood"
+            android:clickable="true"
+            android:elevation="1dp"
+            android:src="@drawable/dial_pad"
+            android:scaleType="fitXY"
+            android:visibility="visible"
+            app:layout_anchorGravity="bottom|end" />
+
+    <LinearLayout
+            android:id="@+id/dialer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:visibility="gone"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <!-- Your dialer UI components go here -->
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

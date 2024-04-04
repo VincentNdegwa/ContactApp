@@ -18,8 +18,7 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
             android:allowBackup="true"
@@ -31,6 +30,16 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.ContactApp"
             tools:targetApi="31">
+        <activity
+                android:name=".HomePage"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
         <activity
                 android:name=".IncommingCall"
                 android:exported="false"/>
@@ -58,18 +67,18 @@
                 <action android:name="android.telecom.InCallService"/>
             </intent-filter>
         </service>
-
-        <service android:name=".Services.CallNotificationService"
-                 android:enabled="true"
-                 android:exported="false"/>
+        <service
+                android:name=".Services.CallNotificationService"
+                android:enabled="true"
+                android:exported="false"/>
         <service
                 android:name=".Services.AnswerCallService"
                 android:enabled="true"
-                android:exported="false" />
+                android:exported="false"/>
         <service
                 android:name=".Services.DeclineCallService"
                 android:enabled="true"
-                android:exported="false" />
+                android:exported="false"/>
 
         <activity
                 android:name=".Dialer"
@@ -105,15 +114,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity
-                android:name=".MainActivity"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+
+
     </application>
 
 </manifest>

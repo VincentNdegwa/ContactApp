@@ -1,49 +1,57 @@
-package com.example.contactapp;
+package com.example.contactapp.Fragments;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-
+import android.view.ViewGroup;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.contactapp.Adapters.ContactsAdapter;
 import com.example.contactapp.Data.contactUser;
 import com.example.contactapp.Data.contacts;
 import com.example.contactapp.Modules.SearchContacts;
-import com.example.contactapp.databinding.ActivityMainBinding;
+import com.example.contactapp.databinding.FragmentContactBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
 
+public class ContactFragment extends Fragment {
     private ActivityResultLauncher<String[]> requestMultiplePermissionsLauncher;
-    private ActivityMainBinding binding;
+    private Context context;
+
+
+    FragmentContactBinding binding;
+    public ContactFragment() {
+        // Required empty public constructor
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        context = getContext();
+        binding = FragmentContactBinding.inflate(getLayoutInflater());
+        eventListener();
+        getManyContacts();
+        return binding.getRoot();
+    }
+
+    public static ContactFragment newInstance(String param1, String param2) {
+        ContactFragment fragment = new ContactFragment();
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        fetchData();
-        eventListener();
-
     }
 
     private void eventListener() {
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String search = charSequence.toString();
-                ArrayList<contactUser> contactsResults  =  SearchContacts.Search((Context) MainActivity.this, search);
+                ArrayList<contactUser> contactsResults  =  SearchContacts.Search((Context) context, search);
                 if (contactsResults != null && contactsResults.size()>0){
                     removeVisibility();
                     renderContacts(contactsResults);
@@ -74,27 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void fetchData() {
-        System.out.println("fetch data is running");
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            getManyContacts();
-        }else {
-            requestMultiplePermissionsLauncher = registerForActivityResult(
-                    new ActivityResultContracts.RequestMultiplePermissions(),
-                    isGranted -> {
-                        if (isGranted.containsValue(true)) {
-                            fetchData();
-                        }
-                    }
-            );
-
-            String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.POST_NOTIFICATIONS};
-            requestMultiplePermissionsLauncher.launch(permissions);
-        }
-    }
-
 
     @SuppressLint("Range")
     public void getManyContacts() {
@@ -105,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID
         };
 
-        Cursor cs = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        Cursor cs = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 projection, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
 
         Log.d("contactCount", String.valueOf(cs.getCount()));
@@ -137,10 +124,10 @@ public class MainActivity extends AppCompatActivity {
             cs.close();
 
             // Now, 'contacts' array contains contacts with multiple phone numbers
-            contacts myContacts = new contacts(contacts);
+            com.example.contactapp.Data.contacts myContacts = new contacts(contacts);
 
 
-            if (myContacts.getContactsArray() != null && myContacts.getContactsArray().size() > 0) {
+            if (myContacts.getContactsArray() != null && !myContacts.getContactsArray().isEmpty()) {
                 removeVisibility();
                 renderContacts(myContacts.getContactsArray());
             } else {
@@ -152,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void renderContacts(ArrayList<contactUser> contactsArray) {
 
-        ContactsAdapter adapter = new ContactsAdapter(this,contactsArray);
+        ContactsAdapter adapter = new ContactsAdapter(context,contactsArray);
         RecyclerView recView = binding.renderRecyclerview;
 
-        LinearLayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layout = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recView.setLayoutManager(layout);
         recView.setAdapter(adapter);
 
@@ -170,4 +157,6 @@ public class MainActivity extends AppCompatActivity {
         binding.renderRecyclerview.setVisibility(View.VISIBLE);
         binding.noContactsText.setVisibility(View.INVISIBLE);
     }
+
+
 }
