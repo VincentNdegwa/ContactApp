@@ -8,23 +8,10 @@
         android:background="@color/dark"
         tools:context=".HomePage">
 
-    <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/main_viewpager"
+    <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_above="@+id/main_tab"
-            android:layout_alignParentTop="true"/>
-
-    <com.google.android.material.tabs.TabLayout
-            android:id="@+id/main_tab"
-            android:background="@color/dark"
-            app:tabTextColor="@color/wood"
-            app:tabSelectedTextColor="@color/fadeblue"
-            app:tabIconTint="@color/wood"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="0dp"
-            android:layout_alignParentBottom="true"
-    />
+            android:layout_height="match_parent"
+            />
 
 </RelativeLayout>

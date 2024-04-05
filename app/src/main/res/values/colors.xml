@@ -10,6 +10,7 @@
 <!--    <color name="grey">#9290C3</color>-->
     <color name="variantwhite">#F5F5F5</color>
     <color name="green">#03C988</color>
+    <color name="transparent">#00FFFFFF</color>
 <!--    ////-->
 
     <color name="accentColor">#FF4081</color> <!-- Vibrant Pink as an example -->

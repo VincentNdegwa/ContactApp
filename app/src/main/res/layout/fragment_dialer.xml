@@ -5,36 +5,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark"
-        android:padding="10dp"
+        android:padding="0dp"
         tools:context=".Fragments.DialerFragment">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:orientation="vertical"
-            android:gravity="center|end">
+            android:background="@color/dark"
+            android:padding="0dp"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
+        <com.google.android.material.search.SearchBar
+                android:id="@+id/search_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center|end">
+                android:background="@color/variantdark"
+                android:backgroundTint="@color/variantdark"
+                android:hint="Search number and names"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
-            <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:clickable="true"
-                    android:src="@drawable/contact_icon2" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        </LinearLayout>
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Recent"
-                android:textColor="@color/fadeblue"
-                android:textStyle="bold"
-                android:textSize="20sp" />
-    </LinearLayout>
+    <com.google.android.material.search.SearchView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/search_bar"
+            app:layout_anchorGravity="bottom">
+
+    </com.google.android.material.search.SearchView>
+
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -66,20 +66,10 @@
             android:clickable="true"
             android:elevation="1dp"
             android:src="@drawable/dial_pad"
+            app:elevation="0dp"
             android:scaleType="fitXY"
             android:visibility="visible"
             app:layout_anchorGravity="bottom|end" />
 
-    <LinearLayout
-            android:id="@+id/dialer_layout"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:visibility="gone"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-        <!-- Your dialer UI components go here -->
-    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
