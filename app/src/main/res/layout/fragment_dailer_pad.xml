@@ -10,9 +10,39 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent" android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.SearchView android:layout_width="match_parent" android:layout_height="match_parent">
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/dark"
+        >
 
-        </androidx.appcompat.widget.SearchView>
+            <com.google.android.material.appbar.AppBarLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/my_app_bar"
+                    android:layout_height="50dp"
+                    android:background="@color/variantdark"
+            >
+
+                <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/baseline_arrow_back_24"
+                        android:background="@color/variantdark"
+                />
+
+
+            </com.google.android.material.appbar.AppBarLayout>
+            <androidx.core.widget.NestedScrollView
+                    android:id="@+id/search_results"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_anchor="@id/my_app_bar"
+                    android:layout_below="@id/my_app_bar"
+            >
+
+
+            </androidx.core.widget.NestedScrollView>
+        </RelativeLayout>
         <LinearLayout
                 android:id="@+id/dialer_layout"
                 android:layout_width="match_parent"

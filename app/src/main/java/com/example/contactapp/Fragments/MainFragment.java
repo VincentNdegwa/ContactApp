@@ -83,7 +83,6 @@ public class MainFragment extends Fragment {
     private void getUserPermission() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            // Permissions already granted
         } else {
             requestMultiplePermissionsLauncher = registerForActivityResult(
                     new ActivityResultContracts.RequestMultiplePermissions(),
@@ -94,7 +93,7 @@ public class MainFragment extends Fragment {
                     }
             );
 
-            String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.POST_NOTIFICATIONS};
+            String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.READ_CALL_LOG};
             requestMultiplePermissionsLauncher.launch(permissions);
         }
     }
