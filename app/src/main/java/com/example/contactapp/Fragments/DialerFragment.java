@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.telecom.Call;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.widget.Button;
@@ -30,8 +31,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.transition.MaterialElevationScale;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 
 public class DialerFragment extends Fragment {
@@ -96,7 +96,7 @@ public class DialerFragment extends Fragment {
 
         return icon;
     }
-    private ArrayMap<String, ArrayMap> allCallLog = new ArrayMap<>();
+    private ArrayList<ArrayMap> allCallLog = new ArrayList<>();
     @SuppressLint("Range")
 
     private void fetchData() {
@@ -109,19 +109,17 @@ public class DialerFragment extends Fragment {
                 CallLog.Calls.PHONE_ACCOUNT_ID
         };
 
-        String selection = null; // You can specify a selection if needed
-        String[] selectionArgs = null; // You can specify selection arguments if needed
-        String sortOrder = CallLog.Calls.NUMBER + " ASC, " + CallLog.Calls.DATE + " DESC"; // Order by number in ascending and date in descending order
-
-        String groupBy = CallLog.Calls.NUMBER; // Group by phone number to get unique entries
-        String having = "MAX(" + CallLog.Calls.DATE + ") = " + CallLog.Calls.DATE; // Filter only the latest call for each number
+        String selection = null;
+        String[] selectionArgs = null;
 
         Cursor cursor = getContext().getContentResolver().query(
-                CallLog.Calls.CONTENT_URI,projection,selection,selectionArgs,sortOrder
+                CallLog.Calls.CONTENT_URI, projection, selection, selectionArgs, CallLog.Calls.DATE + " DESC"
         );
         if (cursor != null) {
             try {
-                while (cursor.moveToNext()) {
+                // Move to the first entry
+                cursor.moveToFirst();
+                do {
                     String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
                     String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
                     long timeInMillis = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
@@ -131,41 +129,23 @@ public class DialerFragment extends Fragment {
                     Date date = new Date(timeInMillis);
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     String formattedTime = formatter.format(date);
-                    String callType;
-                    switch (type) {
-                        case CallLog.Calls.INCOMING_TYPE:
-                            callType = "Incoming";
-                            break;
-                        case CallLog.Calls.OUTGOING_TYPE:
-                            callType = "Outgoing";
-                            break;
-                        case CallLog.Calls.MISSED_TYPE:
-                            callType = "Missed";
-                            break;
-                        default:
-                            callType = "Unknown";
-                    }
+                    String callType = getCallType(type);
 
                     // Determine SIM information
                     String simInfo = sim == 1 ? "SIM1" : "SIM2";
-                    ArrayMap<String, String> userLog = new ArrayMap<>();
-                    if(allCallLog.containsKey(name+"-"+number)){
-                        userLog.put("name", name);
-                        userLog.put("number", number);
-                        userLog.put("time", formattedTime);
-                        userLog.put("sim", simInfo);
-                        userLog.put("type", callType);
-                        allCallLog.get(name+"-"+number).putAll(userLog);
-                    }else {
-                        userLog.put("name", name);
-                        userLog.put("number", number);
-                        userLog.put("time", formattedTime);
-                        userLog.put("sim", simInfo);
-                        userLog.put("type", callType);
-                        allCallLog.put(name+"-"+number,userLog);
-                    }
+                    String key = !TextUtils.isEmpty(name) ? name : number;
 
-                }
+
+                    ArrayMap<String, String> userLog = new ArrayMap<>();
+                    userLog.put("name", name);
+                    userLog.put("number", number);
+                    userLog.put("sim", simInfo);
+                    userLog.put("time", formattedTime);
+                    userLog.put("type", callType);
+                    allCallLog.add(userLog);
+
+                    Log.d("CallLog", "Name: " + name + ", Number: " + number + ", Time: " + formattedTime + ", SIM: " + simInfo + ", Type: " + callType);
+                } while (cursor.moveToNext());
             } finally {
                 cursor.close(); // Close the cursor when done
             }
@@ -173,8 +153,56 @@ public class DialerFragment extends Fragment {
             Log.d("TAG", "Cursor is null");
         }
 
-        Log.d("Data", "fetchData: "+ allCallLog);
+        ArrayList<ArrayMap> uniqueLatestCallLogs = getUniqueLatestCallLogs(allCallLog);
+        System.out.println(uniqueLatestCallLogs);
+
     }
+
+    private String getCallType(int type) {
+        String callType = "Unknown";
+        switch (type) {
+            case CallLog.Calls.INCOMING_TYPE:
+                callType = "Incoming";
+                break;
+            case CallLog.Calls.OUTGOING_TYPE:
+                callType = "Outgoing";
+                break;
+            case CallLog.Calls.MISSED_TYPE:
+                callType = "Missed";
+                break;
+            default:
+                callType = "Unknown";
+        }
+        return callType;
+    }
+
+    private ArrayList<ArrayMap> getUniqueLatestCallLogs(ArrayList<ArrayMap> allCallLogs) {
+        ArrayList<ArrayMap> uniqueLatestCallLogs = new ArrayList<>();
+        Set<String> encounteredNumbers = new HashSet<>();
+        Set<String> encounteredNames = new HashSet<>();
+
+        int index = 0;
+        int size = allCallLogs.size();
+
+        // Loop until all call logs are processed
+        while (index < size) {
+            ArrayMap<String, String> callLog = allCallLogs.get(index);
+            String number = callLog.get("number");
+            String name = callLog.get("name");
+
+            // Check if the number or name has already been encountered
+            if (!encounteredNumbers.contains(number) && !encounteredNames.contains(name)) {
+                uniqueLatestCallLogs.add(callLog);
+                encounteredNumbers.add(number);
+                encounteredNames.add(name);
+            }
+
+            index++;
+        }
+
+        return uniqueLatestCallLogs;
+    }
+
 
 
     private boolean intiatePermission() {
