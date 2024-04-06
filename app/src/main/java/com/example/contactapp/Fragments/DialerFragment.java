@@ -2,16 +2,15 @@ package com.example.contactapp.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.CallLog;
-import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,11 +23,12 @@ import android.view.ViewGroup;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.contactapp.Adapters.DialerPageAdapter;
+import com.example.contactapp.Data.CallDetails;
 import com.example.contactapp.R;
 import com.example.contactapp.databinding.FragmentDialerBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.android.material.transition.MaterialElevationScale;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -100,7 +100,6 @@ public class DialerFragment extends Fragment {
     @SuppressLint("Range")
 
     private void fetchData() {
-        Log.d("TAG", "fetchData");
         String[] projection = {
                 CallLog.Calls.NUMBER,
                 CallLog.Calls.CACHED_NAME,
@@ -142,6 +141,7 @@ public class DialerFragment extends Fragment {
                     userLog.put("sim", simInfo);
                     userLog.put("time", formattedTime);
                     userLog.put("type", callType);
+                    userLog.put("timeMillis", String.valueOf(timeInMillis));
                     allCallLog.add(userLog);
 
                     Log.d("CallLog", "Name: " + name + ", Number: " + number + ", Time: " + formattedTime + ", SIM: " + simInfo + ", Type: " + callType);
@@ -154,8 +154,18 @@ public class DialerFragment extends Fragment {
         }
 
         ArrayList<ArrayMap> uniqueLatestCallLogs = getUniqueLatestCallLogs(allCallLog);
-        System.out.println(uniqueLatestCallLogs);
 
+        ArrayList<CallDetails> callDetails = convertToCallDetails(uniqueLatestCallLogs);
+        saveCallLogsToSharedPref(callDetails);
+
+    }
+
+    private void saveCallLogsToSharedPref(ArrayList<CallDetails> callDetails) {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("CallLogs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = new Gson().toJson(callDetails);
+        editor.putString("logs", json);
+        editor.apply();
     }
 
     private String getCallType(int type) {
@@ -190,7 +200,6 @@ public class DialerFragment extends Fragment {
             String number = callLog.get("number");
             String name = callLog.get("name");
 
-            // Check if the number or name has already been encountered
             if (!encounteredNumbers.contains(number) && !encounteredNames.contains(name)) {
                 uniqueLatestCallLogs.add(callLog);
                 encounteredNumbers.add(number);
@@ -201,6 +210,23 @@ public class DialerFragment extends Fragment {
         }
 
         return uniqueLatestCallLogs;
+    }
+    private ArrayList<CallDetails> convertToCallDetails(ArrayList<ArrayMap> uniqueLatestCallLogs) {
+        ArrayList<CallDetails> callDetailsList = new ArrayList<>();
+
+        for (ArrayMap<String, String> callLog : uniqueLatestCallLogs) {
+            String name = callLog.get("name");
+            String number = callLog.get("number");
+            String time = callLog.get("time");
+            String sim = callLog.get("sim");
+            String type = callLog.get("type");
+            long timeMillis = Long.parseLong(Objects.requireNonNull(callLog.get("timeMillis")));
+
+            CallDetails callDetails = new CallDetails(name, number, time, sim, type, timeMillis);
+            callDetailsList.add(callDetails);
+        }
+
+        return callDetailsList;
     }
 
 

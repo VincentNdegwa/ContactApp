@@ -4,11 +4,11 @@ public class CallDetails {
     private String name;
     private String number;
     private String time;
-    private int sim;
+    private String sim;
     private String type;
     private long timeMills;
 
-    public CallDetails(String name, String number, String time, int sim, String type, long timeMills) {
+    public CallDetails(String name, String number, String time, String sim, String type, long timeMills) {
         this.name = name;
         this.number = number;
         this.time = time;
@@ -33,7 +33,7 @@ public class CallDetails {
         return timeMills;
     }
 
-    public int getSim() {
+    public String getSim() {
         return sim;
     }
 
