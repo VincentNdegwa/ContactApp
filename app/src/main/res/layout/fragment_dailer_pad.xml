@@ -32,7 +32,7 @@
 
 
             </com.google.android.material.appbar.AppBarLayout>
-            <androidx.core.widget.NestedScrollView
+            <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/search_results"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -41,7 +41,7 @@
             >
 
 
-            </androidx.core.widget.NestedScrollView>
+            </androidx.recyclerview.widget.RecyclerView>
         </RelativeLayout>
         <LinearLayout
                 android:id="@+id/dialer_layout"
@@ -238,16 +238,56 @@
             </LinearLayout>
 
             <!-- Delete Button -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="8dp">
             <ImageButton
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:src="@drawable/answer_call"
-                    android:layout_gravity="center"
                     android:clickable="true"
                     android:id="@+id/intiate_call"
                     android:background="@drawable/button_bg_green_round"
             />
+            <ImageButton
+                    android:id="@+id/down_keypad"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/down_arrow"
+                    android:clickable="true"
+                    app:layout_constraintHorizontal_bias="0.922"
+                    android:background="@color/transparent"
+                    app:layout_constraintVertical_bias="0.922"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_dialer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:backgroundTint="@color/wood"
+                android:clickable="true"
+                android:elevation="1dp"
+                android:src="@drawable/dial_pad"
+                app:elevation="0dp"
+                android:scaleType="fitXY"
+                android:visibility="visible"
+                app:layout_anchorGravity="bottom|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

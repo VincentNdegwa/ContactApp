@@ -16,8 +16,9 @@ public class SearchContacts {
     @SuppressLint("Range")
     public static ArrayList<contactUser> Search(Context context, String search){
 
-        String selection = ContactsContract.Contacts.DISPLAY_NAME+" LIKE?";
-        String[] selectionArgs = new String[]{"%"+search+"%"};
+        String selection = ContactsContract.Contacts.DISPLAY_NAME + " LIKE ?" + " OR " +
+                ContactsContract.CommonDataKinds.Phone.NUMBER + " LIKE ?";
+        String[] selectionArgs = {"%" + search + "%", "%" + search + "%"};
         String[] projection =  new String[]{
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,

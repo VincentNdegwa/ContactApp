@@ -7,8 +7,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.contactapp.Adapters.CallLogsAdapter;
 import com.example.contactapp.Data.CallDetails;
 import com.example.contactapp.R;
+import com.example.contactapp.databinding.FragmentDialerOutgoingBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -18,7 +22,8 @@ import java.util.ArrayList;
 
 public class DialerOutgoingFragment extends Fragment {
 
-
+    public FragmentDialerOutgoingBinding binding;
+    public ArrayList<CallDetails> callDetails;
 
     public DialerOutgoingFragment() {
         // Required empty public constructor
@@ -37,20 +42,29 @@ public class DialerOutgoingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentDialerOutgoingBinding.inflate(getLayoutInflater());
         getDataFromSharedPref();
-        return inflater.inflate(R.layout.fragment_dialer_outgoing, container, false);
+        renderData();
+        return binding.getRoot();
     }
     private void getDataFromSharedPref() {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("CallLogs", Context.MODE_PRIVATE);
         String json = sharedPreferences.getString("logs","");
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<CallDetails>>(){}.getType();
-        ArrayList<CallDetails> callDetails = gson.fromJson(json,type);
-        ArrayList<CallDetails> Calls = new ArrayList<>();
-        for(CallDetails call: callDetails ){
-            if ("Missed".equals(call.getType())){
-                Calls.add(call);
+        ArrayList<CallDetails> callsData = gson.fromJson(json,type);
+        callDetails = new ArrayList<>();
+        for(CallDetails call: callsData ){
+            if ("Outgoing".equals(call.getType())){
+                callDetails.add(call);
             }
         }
+    }
+    private void renderData() {
+        CallLogsAdapter adapter = new CallLogsAdapter(callDetails, getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
+        RecyclerView recyclerView = binding.callLogRecyclerview;
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 }

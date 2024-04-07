@@ -146,7 +146,6 @@ public class DialerFragment extends Fragment {
                     userLog.put("timeMillis", String.valueOf(timeInMillis));
                     allCallLog.add(userLog);
 
-                    Log.d("CallLog", "Name: " + name + ", Number: " + number + ", Time: " + formattedTime + ", SIM: " + simInfo + ", Type: " + callType);
                 } while (cursor.moveToNext());
             } finally {
                 cursor.close(); // Close the cursor when done
@@ -184,8 +183,6 @@ public class DialerFragment extends Fragment {
 
     private ArrayList<ArrayMap> getUniqueLatestCallLogs(ArrayList<ArrayMap> allCallLogs) {
         ArrayList<ArrayMap> uniqueLatestCallLogs = new ArrayList<>();
-        Set<String> encounteredNumbers = new HashSet<>();
-        Set<String> encounteredNames = new HashSet<>();
         Set<String> encounteredKeys = new HashSet<>();
 
         int index = 0;
@@ -194,20 +191,11 @@ public class DialerFragment extends Fragment {
         // Loop until all call logs are processed
         while (index < size) {
             ArrayMap<String, String> callLog = allCallLogs.get(index);
-            String number = callLog.get("number");
-            String name = callLog.get("name");
             String key = callLog.get("key");
             if (!encounteredKeys.contains(key)){
                 uniqueLatestCallLogs.add(callLog);
                 encounteredKeys.add(key);
             }
-
-//            if (!encounteredNumbers.contains(number) && !encounteredNames.contains(name)) {
-//                uniqueLatestCallLogs.add(callLog);
-//                encounteredNumbers.add(number);
-//                encounteredNames.add(name);
-//            }
-
             index++;
         }
 
