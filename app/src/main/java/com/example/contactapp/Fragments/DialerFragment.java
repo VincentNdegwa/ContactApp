@@ -133,10 +133,12 @@ public class DialerFragment extends Fragment {
                     // Determine SIM information
                     String simInfo = sim == 1 ? "SIM1" : "SIM2";
                     String key = !TextUtils.isEmpty(name) ? name : number;
+                    String visualName = TextUtils.isEmpty(name)? number: name;
 
 
                     ArrayMap<String, String> userLog = new ArrayMap<>();
-                    userLog.put("name", name);
+                    userLog.put("key", key);
+                    userLog.put("name", visualName);
                     userLog.put("number", number);
                     userLog.put("sim", simInfo);
                     userLog.put("time", formattedTime);
@@ -160,13 +162,7 @@ public class DialerFragment extends Fragment {
 
     }
 
-    private void saveCallLogsToSharedPref(ArrayList<CallDetails> callDetails) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("CallLogs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String json = new Gson().toJson(callDetails);
-        editor.putString("logs", json);
-        editor.apply();
-    }
+
 
     private String getCallType(int type) {
         String callType = "Unknown";
@@ -190,6 +186,7 @@ public class DialerFragment extends Fragment {
         ArrayList<ArrayMap> uniqueLatestCallLogs = new ArrayList<>();
         Set<String> encounteredNumbers = new HashSet<>();
         Set<String> encounteredNames = new HashSet<>();
+        Set<String> encounteredKeys = new HashSet<>();
 
         int index = 0;
         int size = allCallLogs.size();
@@ -199,12 +196,17 @@ public class DialerFragment extends Fragment {
             ArrayMap<String, String> callLog = allCallLogs.get(index);
             String number = callLog.get("number");
             String name = callLog.get("name");
-
-            if (!encounteredNumbers.contains(number) && !encounteredNames.contains(name)) {
+            String key = callLog.get("key");
+            if (!encounteredKeys.contains(key)){
                 uniqueLatestCallLogs.add(callLog);
-                encounteredNumbers.add(number);
-                encounteredNames.add(name);
+                encounteredKeys.add(key);
             }
+
+//            if (!encounteredNumbers.contains(number) && !encounteredNames.contains(name)) {
+//                uniqueLatestCallLogs.add(callLog);
+//                encounteredNumbers.add(number);
+//                encounteredNames.add(name);
+//            }
 
             index++;
         }
@@ -228,7 +230,13 @@ public class DialerFragment extends Fragment {
 
         return callDetailsList;
     }
-
+    private void saveCallLogsToSharedPref(ArrayList<CallDetails> callDetails) {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("CallLogs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String json = new Gson().toJson(callDetails);
+        editor.putString("logs", json);
+        editor.apply();
+    }
 
 
     private boolean intiatePermission() {

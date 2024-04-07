@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="2dp"
-                    android:textColor="@color/variantdark"
+                    android:textColor="@color/fadeblue"
             />
             <TextView
                     android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="2dp"
                     android:text="."
-                    android:textColor="@color/variantdark"
+                    android:textColor="@color/fadeblue"
             />
             <TextView
                     android:id="@+id/call_time"
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="2dp"
-                    android:textColor="@color/variantdark"
+                    android:textColor="@color/fadeblue"
             />
         </LinearLayout>
 

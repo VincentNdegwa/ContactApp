@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,20 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
         holder.callTime.setText(callLog.getTime());
         holder.callTypeText.setText(callLog.getType());
         holder.contactName.setText(callLog.getName());
+        switch (callLog.getType()){
+            case "Incoming":
+                holder.callTypeIcon.setImageResource(R.drawable.incomming_call);
+                break;
+            case "Outgoing":
+                holder.callTypeIcon.setImageResource(R.drawable.outgoing_call);
+                break;
+            case "Missed":
+                holder.callTypeIcon.setImageResource(R.drawable.missed_call);
+                break;
+            default:
+                holder.callTypeIcon.setImageResource(R.drawable.all_call);
+
+        }
     }
 
     @Override
