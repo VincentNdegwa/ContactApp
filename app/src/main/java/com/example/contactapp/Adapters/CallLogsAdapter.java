@@ -1,14 +1,18 @@
 package com.example.contactapp.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.contactapp.CallLogView;
 import com.example.contactapp.Data.CallDetails;
 import com.example.contactapp.R;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +56,17 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
                 holder.callTypeIcon.setImageResource(R.drawable.all_call);
 
         }
+
+        holder.callButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:"+callLog.getNumber()));
+            context.startActivity(intent);
+        });
+        holder.viewCall.setOnClickListener(view -> {
+            Intent intent = new Intent(context, CallLogView.class);
+            intent.putExtra("phoneNumber", callLog.getNumber());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -65,6 +80,8 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
         public ImageView callTypeIcon;
         public TextView callTypeText;
         public TextView callTime;
+        public ImageButton callButton;
+        public ImageButton viewCall;
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             contactIcon = itemView.findViewById(R.id.contact_name);
@@ -72,6 +89,8 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
             callTypeIcon = itemView.findViewById(R.id.icon_type);
             callTypeText = itemView.findViewById(R.id.call_type_text);
             callTime = itemView.findViewById(R.id.call_time);
+            callButton = itemView.findViewById(R.id.call_button);
+            viewCall = itemView.findViewById(R.id.view_call);
         }
     }
 }
