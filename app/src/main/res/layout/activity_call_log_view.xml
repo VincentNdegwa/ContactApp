@@ -1,4 +1,4 @@
-i<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -8,10 +8,10 @@ i<?xml version="1.0" encoding="utf-8"?>
         android:background="@color/saturated_dark"
         tools:context=".CallLogView">
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:background="@color/transparent"
-        android:elevation="1000dp"
-        android:layout_height="wrap_content">
+        android:background="@color/dark"
+        android:layout_height="65dp">
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,12 +19,59 @@ i<?xml version="1.0" encoding="utf-8"?>
             app:menu="@menu/logs_top_bar"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:elevation="0dp"
-        android:background="@color/dark"
-        android:layout_height="200dp">
+        android:layout_marginTop="65dp"
+        android:layout_gravity="bottom"
+        android:layout_height="100dp">
 
-    </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/dark">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/saturated_dark">
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/call_log_card"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="200dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:backgroundTint="@color/dark"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:padding="30dp"
+                android:scaleType="fitXY"
+                android:id="@+id/contact_image"
+                android:src="@drawable/contact_icon"
+                android:layout_height="match_parent" />
+
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

@@ -28,7 +28,7 @@ public class MainFragment extends Fragment {
     FragmentMainBinding bind;
     private Context context;
     private String TAG = "MainFragment";
-    private FragmentManager fragmentManager;
+    private static FragmentManager fragmentManager;
     private ActivityResultLauncher<String[]> requestMultiplePermissionsLauncher;
 
 
@@ -38,7 +38,7 @@ public class MainFragment extends Fragment {
 
     public static MainFragment newInstance(FragmentManager fr) {
         MainFragment fragment = new MainFragment();
-        fragment.fragmentManager = fr;
+        fragmentManager = fr;
         return fragment;
     }
 
