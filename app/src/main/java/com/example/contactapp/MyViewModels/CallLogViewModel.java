@@ -55,7 +55,7 @@ public class CallLogViewModel extends ViewModel{
                     projection,
                     selection,
                     selectionArgs,
-                    null
+                    CallLog.Calls.DATE+ " DESC"
             );
 
             if (cursor != null) {

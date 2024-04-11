@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/variantdark"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/call_type_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/incomming_call"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/call_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/variantwhite"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/call_type_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/call_type"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/fadeblue"
+        app:layout_constraintStart_toEndOf="@id/call_type_icon"
+        app:layout_constraintTop_toBottomOf="@id/call_time" />
+
+    <TextView
+        android:id="@+id/call_sim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textSize="11sp"
+        android:textColor="@color/variantwhite"
+        app:layout_constraintStart_toEndOf="@id/call_type"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/call_type" />
+
+    <TextView
+        android:id="@+id/call_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/variantwhite"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toEndOf="@id/call_sim"
+        app:layout_constraintTop_toTopOf="@id/call_sim" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
