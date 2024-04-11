@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -29,11 +30,16 @@ public class CallLogViewModel extends ViewModel{
         return callLogs;
     }
     @SuppressLint("Range")
-    private List<CallDetails>  getCallLogsFromProvide(Context context, String phoneNumber) {
+    private List<CallDetails>  getCallLogsFromProvide(Context context, @Nullable String phoneNumber) {
         List<CallDetails> callDetailsArray = new ArrayList<CallDetails>();
+        String selection = null;
+        String[] selectionArgs = null;
+        if (phoneNumber != null){
+             selection = CallLog.Calls.NUMBER + "=?";
+             selectionArgs = new String[]{phoneNumber};
+        }
 
-            String selection = CallLog.Calls.NUMBER + "=?";
-            String[] selectionArgs = {phoneNumber};
+
 
             String[] projection = {
                     CallLog.Calls.CACHED_NAME,

@@ -1,6 +1,7 @@
 package com.example.contactapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,9 +15,11 @@ import android.util.Log;
 import com.example.contactapp.Data.CallDetails;
 import com.example.contactapp.MyViewModels.CallLogViewModel;
 import com.example.contactapp.databinding.ActivityCallLogViewBinding;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CallLogView extends AppCompatActivity {
@@ -34,12 +37,9 @@ public class CallLogView extends AppCompatActivity {
     }
     private void getData(String phoneNumber) {
         CallLogViewModel callLogViewModel = new CallLogViewModel();
-        callLogViewModel.getContactLogs(this, phoneNumber).observe(this, CallDetailsList->{
-            for (CallDetails log: CallDetailsList){
-                Log.d("CallLogView", "Name: " + log.getName());
-                Log.d("CallLogView", "Number: " + log.getNumber());
-                Log.d("CallLogView", "--------------------------");
-            }
+        callLogViewModel.getContactLogs(this,phoneNumber).observe(this, callDetails -> {
+            System.out.println(new Gson().toJson(callDetails));
         });
+
     }
 }
