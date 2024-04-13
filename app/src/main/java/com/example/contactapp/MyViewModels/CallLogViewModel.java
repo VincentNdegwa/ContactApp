@@ -19,78 +19,93 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CallLogViewModel extends ViewModel{
-    public LiveData<List<CallDetails>> getContactLogs(Context context, String phoneNumber){
+    public LiveData<List<CallDetails>> getLimitedContactLogs(Context context, String phoneNumber){
         MutableLiveData<List<CallDetails>> callLogs = new MutableLiveData<>();
 
         new Thread(()->{
-            List<CallDetails> callEntries = getCallLogsFromProvide(context, phoneNumber);
+            List<CallDetails> callEntries = getCallLogsFromProvider(context, phoneNumber,true);
+            callLogs.postValue(callEntries);
+        }).start();
+
+        return callLogs;
+    }
+
+    public LiveData<List<CallDetails>> getAllContactLogs(Context context, String phoneNumber){
+        MutableLiveData<List<CallDetails>> callLogs = new MutableLiveData<>();
+
+        new Thread(()->{
+            List<CallDetails> callEntries = getCallLogsFromProvider(context, phoneNumber,false);
             callLogs.postValue(callEntries);
         }).start();
 
         return callLogs;
     }
     @SuppressLint("Range")
-    private List<CallDetails>  getCallLogsFromProvide(Context context, @Nullable String phoneNumber) {
-        List<CallDetails> callDetailsArray = new ArrayList<CallDetails>();
+    private List<CallDetails> getCallLogsFromProvider(Context context, @Nullable String phoneNumber, boolean limited) {
+        List<CallDetails> callDetailsArray = new ArrayList<>();
         String selection = null;
         String[] selectionArgs = null;
-        if (phoneNumber != null){
-             selection = CallLog.Calls.NUMBER + "=?";
-             selectionArgs = new String[]{phoneNumber};
+        String sortOrder = CallLog.Calls.DATE + " DESC";
+        if (phoneNumber != null) {
+            selection = CallLog.Calls.NUMBER + "=?";
+            selectionArgs = new String[]{phoneNumber};
         }
 
+        String[] projection = {
+                CallLog.Calls.CACHED_NAME,
+                CallLog.Calls.NUMBER,
+                CallLog.Calls.DATE,
+                CallLog.Calls.PHONE_ACCOUNT_ID,
+                CallLog.Calls.TYPE,
+                CallLog.Calls.DURATION
+        };
 
+        Cursor cursor = context.getContentResolver().query(
+                CallLog.Calls.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+        );
 
-            String[] projection = {
-                    CallLog.Calls.CACHED_NAME,
-                    CallLog.Calls.NUMBER,
-                    CallLog.Calls.DATE,
-                    CallLog.Calls.PHONE_ACCOUNT_ID,
-                    CallLog.Calls.TYPE,
-                    CallLog.Calls.DURATION
-            };
+        if (cursor != null) {
+            try {
+                int count = 0;
+                while (cursor.moveToNext() && (!limited || count < 10)) {
+                    String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
+                    String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                    long timeInMillis = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
+                    int sim = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID));
+                    int type = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
+                    long duration = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DURATION));
 
-            Cursor cursor = context.getContentResolver().query(
-                    CallLog.Calls.CONTENT_URI,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    CallLog.Calls.DATE+ " DESC"
-            );
+                    String formattedTime = DateUtils.formatDateTime(
+                            context,
+                            timeInMillis,
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME
+                    );
 
-            if (cursor != null) {
-                try {
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                        String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                        long timeInMillis = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
-                        int sim = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID));
-                        int type = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
-                        long duration = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DURATION));
+                    String callType = getCallType(type);
 
-                        String formattedTime = DateUtils.formatDateTime(
-                                context,
-                                timeInMillis,
-                                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME
-                        );
+                    String simInfo = sim == 1 ? "SIM1" : "SIM2";
+                    String key = !TextUtils.isEmpty(name) ? name : number;
+                    String visualName = TextUtils.isEmpty(name) ? number : name;
 
-                        String callType = getCallType(type);
-
-                        String simInfo = sim == 1 ? "SIM1" : "SIM2";
-                        String key = !TextUtils.isEmpty(name) ? name : number;
-                        String visualName = TextUtils.isEmpty(name) ? number : name;
-
-                        CallDetails callDetails = new CallDetails(name,number,formattedTime,simInfo,callType,timeInMillis);
-                        callDetailsArray.add(callDetails);
-                    }
-                } finally {
-                    cursor.close();
+                    CallDetails callDetails = new CallDetails(name, number, formattedTime, simInfo, callType, timeInMillis);
+                    callDetailsArray.add(callDetails);
+                    count++;
                 }
-            } else {
-                Log.d("CallLogView", "Cursor is Null");
+            } finally {
+                cursor.close();
             }
+        } else {
+            Log.d("CallLogView", "Cursor is Null");
+        }
         return callDetailsArray;
-    };
+    }
+
+
+
 
     private String getCallType(int type) {
         switch (type) {

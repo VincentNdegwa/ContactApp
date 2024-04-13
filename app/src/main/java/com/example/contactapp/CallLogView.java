@@ -1,6 +1,8 @@
 package com.example.contactapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +15,11 @@ import android.provider.CallLog;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.example.contactapp.Adapters.ViewCallLogAdapter;
 import com.example.contactapp.Data.CallDetails;
+import com.example.contactapp.Fragments.FullLogViewFragment;
 import com.example.contactapp.MyViewModels.CallLogViewModel;
 import com.example.contactapp.databinding.ActivityCallLogViewBinding;
 import com.google.gson.Gson;
@@ -28,19 +32,23 @@ import java.util.Locale;
 public class CallLogView extends AppCompatActivity {
     ActivityCallLogViewBinding binding;
     ViewCallLogAdapter adapter;
+    public String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String phoneNUmber = intent.getStringExtra("phoneNumber");
+        phoneNumber = intent.getStringExtra("phoneNumber");
         binding = ActivityCallLogViewBinding.inflate(getLayoutInflater());
-        getData(phoneNUmber);
+        getData(phoneNumber);
         setContentView(binding.getRoot());
+        setEventListeners();
     }
+
     private void getData(String phoneNumber) {
         CallLogViewModel callLogViewModel = new CallLogViewModel();
-        callLogViewModel.getContactLogs(this,phoneNumber).observe(this, callDetails -> {
+        callLogViewModel.getLimitedContactLogs(this,phoneNumber).observe(this, callDetails -> {
+            System.out.println(callDetails);
                 renderData(callDetails);
         });
 
@@ -52,5 +60,17 @@ public class CallLogView extends AppCompatActivity {
         RecyclerView recyclerView = binding.callLogRecyclerview;
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+    private void setEventListeners() {
+        binding.viewAllButton.setOnClickListener(view -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.log_view_fragment, FullLogViewFragment.newInstance(phoneNumber));
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+        binding.logToolBar.setNavigationOnClickListener(view -> {
+            onBackPressed();
+        });
     }
 }
