@@ -33,16 +33,20 @@ public class CallLogView extends AppCompatActivity {
     ActivityCallLogViewBinding binding;
     ViewCallLogAdapter adapter;
     public String phoneNumber;
+    public String phoneName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phoneNumber");
+        phoneName = intent.getStringExtra("phoneName");
+
         binding = ActivityCallLogViewBinding.inflate(getLayoutInflater());
         getData(phoneNumber);
         setContentView(binding.getRoot());
         setEventListeners();
+        setDataOnUi(phoneNumber,phoneName);
     }
 
     private void getData(String phoneNumber) {
@@ -72,5 +76,10 @@ public class CallLogView extends AppCompatActivity {
         binding.logToolBar.setNavigationOnClickListener(view -> {
             onBackPressed();
         });
+    }
+
+    private void setDataOnUi(String phoneNumber, String phoneName) {
+        binding.userName.setText(phoneName);
+        binding.callLogNumber.setText(phoneNumber);
     }
 }

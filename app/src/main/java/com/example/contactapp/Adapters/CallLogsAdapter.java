@@ -65,6 +65,7 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
         holder.viewCall.setOnClickListener(view -> {
             Intent intent = new Intent(context, CallLogView.class);
             intent.putExtra("phoneNumber", callLog.getNumber());
+            intent.putExtra("phoneName", callLog.getName());
             context.startActivity(intent);
         });
     }
