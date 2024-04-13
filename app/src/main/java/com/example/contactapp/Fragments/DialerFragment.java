@@ -5,12 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.CallLog;
-import android.text.TextUtils;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,13 +21,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.contactapp.Adapters.DialerPageAdapter;
 import com.example.contactapp.Data.CallDetails;
+import com.example.contactapp.MyViewModels.CallLogViewModel;
 import com.example.contactapp.R;
 import com.example.contactapp.databinding.FragmentDialerBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -100,89 +97,21 @@ public class DialerFragment extends Fragment {
     @SuppressLint("Range")
 
     private void fetchData() {
-        String[] projection = {
-                CallLog.Calls.NUMBER,
-                CallLog.Calls.CACHED_NAME,
-                CallLog.Calls.DATE,
-                CallLog.Calls.TYPE,
-                CallLog.Calls.PHONE_ACCOUNT_ID
-        };
 
-        String selection = null;
-        String[] selectionArgs = null;
+        CallLogViewModel callLogViewModel = new CallLogViewModel();
+        callLogViewModel.getAllContactLogs(getContext(), null).observe(getViewLifecycleOwner(), callDetails -> {
+            ArrayList<CallDetails> uniqueLatestCallLogs = getUniqueLatestCallLogs(callDetails);
+            saveCallLogsToSharedPref(uniqueLatestCallLogs);
 
-        Cursor cursor = getContext().getContentResolver().query(
-                CallLog.Calls.CONTENT_URI, projection, selection, selectionArgs, CallLog.Calls.DATE + " DESC"
-        );
-        if (cursor != null) {
-            try {
-                // Move to the first entry
-                cursor.moveToFirst();
-                do {
-                    String name = cursor.getString(cursor.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                    String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                    long timeInMillis = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
-                    int sim = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID)); // Use PHONE_ACCOUNT_ID to get SIM info
-                    int type = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
-
-                    Date date = new Date(timeInMillis);
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String formattedTime = formatter.format(date);
-                    String callType = getCallType(type);
-
-                    // Determine SIM information
-                    String simInfo = sim == 1 ? "SIM1" : "SIM2";
-                    String key = !TextUtils.isEmpty(name) ? name : number;
-                    String visualName = TextUtils.isEmpty(name)? number: name;
+        });
 
 
-                    ArrayMap<String, String> userLog = new ArrayMap<>();
-                    userLog.put("key", key);
-                    userLog.put("name", visualName);
-                    userLog.put("number", number);
-                    userLog.put("sim", simInfo);
-                    userLog.put("time", formattedTime);
-                    userLog.put("type", callType);
-                    userLog.put("timeMillis", String.valueOf(timeInMillis));
-                    allCallLog.add(userLog);
-
-                } while (cursor.moveToNext());
-            } finally {
-                cursor.close(); // Close the cursor when done
-            }
-        } else {
-            Log.d("TAG", "Cursor is null");
-        }
-
-        ArrayList<ArrayMap> uniqueLatestCallLogs = getUniqueLatestCallLogs(allCallLog);
-
-        ArrayList<CallDetails> callDetails = convertToCallDetails(uniqueLatestCallLogs);
-        saveCallLogsToSharedPref(callDetails);
 
     }
 
 
-
-    private String getCallType(int type) {
-        String callType = "Unknown";
-        switch (type) {
-            case CallLog.Calls.INCOMING_TYPE:
-                callType = "Incoming";
-                break;
-            case CallLog.Calls.OUTGOING_TYPE:
-                callType = "Outgoing";
-                break;
-            case CallLog.Calls.MISSED_TYPE:
-                callType = "Missed";
-                break;
-            default:
-                callType = "Unknown";
-        }
-        return callType;
-    }
-
-    private ArrayList<ArrayMap> getUniqueLatestCallLogs(ArrayList<ArrayMap> allCallLogs) {
-        ArrayList<ArrayMap> uniqueLatestCallLogs = new ArrayList<>();
+    private ArrayList<CallDetails> getUniqueLatestCallLogs(List<CallDetails> allCallLogs) {
+        ArrayList<CallDetails> uniqueLatestCallLogs = new ArrayList<>();
         Set<String> encounteredKeys = new HashSet<>();
 
         int index = 0;
@@ -190,8 +119,8 @@ public class DialerFragment extends Fragment {
 
         // Loop until all call logs are processed
         while (index < size) {
-            ArrayMap<String, String> callLog = allCallLogs.get(index);
-            String key = callLog.get("key");
+            CallDetails callLog = allCallLogs.get(index);
+            String key = callLog.getKey();
             if (!encounteredKeys.contains(key)){
                 uniqueLatestCallLogs.add(callLog);
                 encounteredKeys.add(key);
@@ -201,23 +130,7 @@ public class DialerFragment extends Fragment {
 
         return uniqueLatestCallLogs;
     }
-    private ArrayList<CallDetails> convertToCallDetails(ArrayList<ArrayMap> uniqueLatestCallLogs) {
-        ArrayList<CallDetails> callDetailsList = new ArrayList<>();
 
-        for (ArrayMap<String, String> callLog : uniqueLatestCallLogs) {
-            String name = callLog.get("name");
-            String number = callLog.get("number");
-            String time = callLog.get("time");
-            String sim = callLog.get("sim");
-            String type = callLog.get("type");
-            long timeMillis = Long.parseLong(Objects.requireNonNull(callLog.get("timeMillis")));
-
-            CallDetails callDetails = new CallDetails(name, number, time, sim, type, timeMillis);
-            callDetailsList.add(callDetails);
-        }
-
-        return callDetailsList;
-    }
     private void saveCallLogsToSharedPref(ArrayList<CallDetails> callDetails) {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("CallLogs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

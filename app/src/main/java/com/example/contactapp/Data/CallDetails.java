@@ -1,5 +1,7 @@
 package com.example.contactapp.Data;
 
+import android.text.TextUtils;
+
 public class CallDetails {
     private String name;
     private String number;
@@ -7,6 +9,7 @@ public class CallDetails {
     private String sim;
     private String type;
     private long timeMills;
+    private String key;
 
     public CallDetails(String name, String number, String time, String sim, String type, long timeMills) {
         this.name = name;
@@ -15,6 +18,10 @@ public class CallDetails {
         this.sim = sim;
         this.type = type;
         this.timeMills = timeMills;
+        updateKey();
+    }
+    private void updateKey() {
+        this.key = TextUtils.isEmpty(name) ? number : name;
     }
 
     public String getName() {
@@ -39,5 +46,9 @@ public class CallDetails {
 
     public String getType() {
         return type;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

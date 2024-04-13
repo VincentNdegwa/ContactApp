@@ -41,7 +41,7 @@ public class CallLogsAdapter extends RecyclerView.Adapter<CallLogsAdapter.ViewHo
         CallDetails callLog = callDetails.get(position);
         holder.callTime.setText(callLog.getTime());
         holder.callTypeText.setText(callLog.getType());
-        holder.contactName.setText(callLog.getName());
+        holder.contactName.setText(callLog.getKey());
         switch (callLog.getType()){
             case "Incoming":
                 holder.callTypeIcon.setImageResource(R.drawable.incomming_call);
