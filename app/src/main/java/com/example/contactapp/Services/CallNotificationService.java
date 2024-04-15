@@ -71,14 +71,14 @@ public class CallNotificationService extends Service {
                     .setSmallIcon(R.drawable.phone_icon)
                     .setVisibility(Notification.VISIBILITY_PRIVATE)
                     .setStyle(Notification.CallStyle.forOngoingCall(
-                            new Person.Builder().setName("callerName").build(),
+                            new Person.Builder().setName(callerName).build(),
                             declinePendingIntent
 
                     ));
         } else {
             builder = new Notification.Builder(this, INCOMING_CHANNEL_ID)
                     .setContentTitle("Outgoing call")
-                    .setContentText("callerName")
+                    .setContentText(callerName)
                     .setPriority(Notification.PRIORITY_LOW)
                     .setOngoing(true)
                     .setSmallIcon(R.drawable.phone_icon)

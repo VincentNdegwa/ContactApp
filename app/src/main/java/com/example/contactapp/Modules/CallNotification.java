@@ -14,6 +14,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.telecom.Call;
+import android.text.TextUtils;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -88,7 +90,8 @@ public class CallNotification {
 
 
         Intent serviceIntent = new Intent(context, CallNotificationService.class);
-        serviceIntent.putExtra("callerName", "Caller");
+        String name = TextUtils.isEmpty(call.getDetails().getCallerDisplayName()) ? call.getDetails().getCallerDisplayName(): "Unknown";
+        serviceIntent.putExtra("callerName", name);
         serviceIntent.putExtra("declinePendingIntent", declinePendingIntent);
         serviceIntent.putExtra("answerPendingIntent", answerPendingIntent);
         serviceIntent.putExtra("contentIntent", contentIntent);
